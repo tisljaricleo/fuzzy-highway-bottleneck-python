@@ -51,9 +51,48 @@ def get_data(file_name, n_vehicles):
         raise ValueError("Method get_data() takes string 'all' or integer.")
 
 
+def change_length(traff_data, length: int):
+    """Change link length
+
+    Changes the length of the observed highway links. Useful when original links are
+    short (ex. 50m) and you want to run a this methodology on larger links (ex. 500m)
+
+    :param traff_data: Routes data
+    :param length: Highway link length
+    :type traff_data: dict
+    :type length: int
+    :return:
+    """
+    new_lengths = list(range(0, 8001, length))
+
+    for route_id in traff_data:
+
+        # If there is only one entry, skip
+        if len(traff_data[route_id]) == 1:
+            continue
+
+        for record_id in range(0, len(traff_data[route_id])):
+            _id = traff_data[route_id][record_id][1]
+
+            # Link with id E0 is the input link for simulation
+            if _id == 'E0':
+                continue
+
+            for i in range(0, len(new_lengths) - 1):
+                first = new_lengths[i]
+                second = new_lengths[i + 1]
+
+                if first < int(_id) <= second:
+                    _id = second
+                    traff_data[route_id][record_id][1] = str(second)
+
+
 def main():
     # Gets routes data.
-    routes_data = get_data('TrafData.pkl', 100)
+    routes_data = get_data(r'.\\data\\all_data\\TrafData.pkl', 100)
+
+    # Use only if needed
+    # change_length(routes_data, 500):
 
     # Generates transitions from routes data.
     transitions = STMops.make_transitions(routes_data)
