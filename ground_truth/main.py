@@ -5,6 +5,10 @@ import numpy as np
 import seaborn as sns
 from scipy.signal import savgol_filter
 import os
+import time
+import concurrent.futures
+
+# start = time.perf_counter()
 
 sns.set_theme()
 
@@ -59,7 +63,7 @@ n_segments = 160  # Number of freeway segments.
 segment_ids = range(1, 161, 1)
 segment_length = 50  # Freeway segment length [m].
 
-data_dir = "./data/"
+data_dir = "/home/leo/PycharmProjects/highwayBottleneck/data/"
 data_paths = []
 interval_counter = 1
 
@@ -70,10 +74,14 @@ for file in os.listdir(data_dir):
 data_paths.sort()
 data_paths.sort(key=lambda x: len(x))
 
-# A matrix with all bottleneck status data. Format: Time x Segment - cell 0 or 1 (1- bottleneck, 0- OK)
-total_bottleneck_status = []
 
-for path in data_paths:
+def get_bottleneck_status(path):
+    """
+    Computes bottleneck status for every freeway segment.
+    :param path: Path to pickle that contains 5min of simulation data.
+    :type path: str
+    :return: List of 0s or 1s for every freeway segment (0-OK, 1-Bottleneck).
+    """
     data_link = open_pickle(path)
 
     valid_data = dict(filter(lambda x: "E" not in x[0] and "gne" not in x[0], data_link.items()))
@@ -150,21 +158,24 @@ for path in data_paths:
     # fig.suptitle(f"Interval {interval_counter * 5}(s)")
     # plt.show()
 
-    interval_counter += 1
-
-    total_bottleneck_status.append(bottleneck_status)
-
-
-total_bottleneck_status = np.array(total_bottleneck_status)
-
-ax = plt.axes()
-sns.heatmap(total_bottleneck_status, ax = ax)
-ax.set_title('Ground truth bottleneck estimations')
-ax.set_xlabel("Freeway segment")
-ax.set_ylabel("Time (min)")
-plt.show()
-
-print()
+    # interval_counter += 1
+    return bottleneck_status
 
 
+def get_total_bottleneck_status():
+    # TODO: Exe time for computations 0.18s. Exe time for generator to list conversion 8s!!!!!
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        results = executor.map(get_bottleneck_status, data_paths)
+        total_bottleneck_status = [result for result in results]
 
+    return total_bottleneck_status
+
+    # end = time.perf_counter()
+    # print(f'Ended in {round(end-start, 2)} seconds!')
+
+    # ax = plt.axes()
+    # sns.heatmap(total_bottleneck_status, ax=ax)
+    # ax.set_title('Ground truth bottleneck estimations')
+    # ax.set_xlabel("Freeway segment")
+    # ax.set_ylabel("Time (min)")
+    # plt.show()
