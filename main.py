@@ -20,6 +20,7 @@ from misc.misc import open_pickle, plot_heatmap
 from FuzzySTM import FuzzyBott, STMops
 from itertools import islice
 import numpy as np
+import os
 
 
 def get_data(file_name, n_vehicles):
@@ -43,7 +44,7 @@ def get_data(file_name, n_vehicles):
     """
     data = open_pickle(file_name)
     try:
-        if n_vehicles == 'all':
+        if n_vehicles == "all":
             return data
         else:
             return dict(islice(data.items(), int(n_vehicles)))
@@ -75,7 +76,7 @@ def change_length(traff_data, length: int):
             _id = traff_data[route_id][record_id][1]
 
             # Link with id E0 is the input link for simulation
-            if _id == 'E0':
+            if _id == "E0":
                 continue
 
             for i in range(0, len(new_lengths) - 1):
@@ -88,36 +89,59 @@ def change_length(traff_data, length: int):
 
 
 def main():
-    # Gets routes data.
-    routes_data = get_data(r'.\\data\\all_data\\TrafData.pkl', 100)
 
-    # Use only if needed
-    # change_length(routes_data, 500):
+    data_dir = "/home/leo/PycharmProjects/highwayBottleneck/data/"
+    data_paths = []
+    matrix_bprob_proposed = []
 
-    # Generates transitions from routes data.
-    transitions = STMops.make_transitions(routes_data)
+    interval_counter = 1
 
-    # Initializes the FIS.
-    fuzzy = FuzzyBott()
+    # Get all data from 24 time intervals.
+    for file in os.listdir(data_dir):
+        if file.endswith(".pkl") and "Veh" in file:
+            data_paths.append(os.path.join(data_dir, file))
 
-    # Plot input and output variables from FIS
-    fuzzy.plot_vars()
+    for dp in data_paths:
 
-    for trans in transitions.keys():
-        speeds = np.array(transitions[trans])
+        # Gets routes data.
+        # routes_data = get_data(r"./data/all_data/TrafData.pkl", "all")
+        routes_data = get_data(dp, "all")
 
-        # Computes the STM.
-        stm = STMops.compute_stm(speeds[:, 0], speeds[:, 1])
+        # Use only if needed
+        # change_length(routes_data, 500):
 
-        # dd - diagonal distance, sd - source distance
-        dd, sd = STMops().get_distances(stm)
+        # Generates transitions from routes data.
+        transitions = STMops.make_transitions(routes_data)
 
-        # Result of the FIS.
-        result = fuzzy.get_bot_prob(diag_dist=dd, origin_dist=sd)
+        # Initializes the FIS.
+        fuzzy = FuzzyBott()
 
-        # Plots STM with corresponding highway bottleneck probability.
-        plot_heatmap(stm, '{0}; {1}'.format(trans, result))
+        # Plot input and output variables from FIS
+        fuzzy.plot_vars()
+
+        bot_prob_edges = []
+
+        for trans in transitions.keys():
+            speeds = np.array(transitions[trans])
+
+            # Computes the STM.
+            stm = STMops.compute_stm(speeds[:, 0], speeds[:, 1])
+
+            # dd - diagonal distance, sd - source distance
+            dd, sd = STMops().get_distances(stm)
+
+            # Result of the FIS.
+            result = fuzzy.get_bot_prob(diag_dist=dd, origin_dist=sd)
+
+            bot_prob_edges.append(result)
+
+            # Plots STM with corresponding highway bottleneck probability.
+            # plot_heatmap(stm, "{0}; {1}".format(trans, result))
+
+        matrix_bprob_proposed.append(bot_prob_edges)
+
+    print()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

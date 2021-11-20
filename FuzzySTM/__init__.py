@@ -39,21 +39,33 @@ class FuzzyBott(object):
         p1 = FuzzySet(function=InvSigmoid_MF(c=0.25, a=20), term="small")
         p2 = FuzzySet(function=Gaussian_MF(mu=0.5, sigma=0.1), term="medium")
         p3 = FuzzySet(function=Sigmoid_MF(c=0.75, a=20), term="large")
-        self.input_1 = LinguisticVariable([p1, p2, p3], concept="Distance from diagonal", universe_of_discourse=[0, 1])
+        self.input_1 = LinguisticVariable(
+            [p1, p2, p3],
+            concept="Distance from diagonal",
+            universe_of_discourse=[0, 1],
+        )
         self.fs.add_linguistic_variable("diag_dist", self.input_1)
 
         # Input variable distance from origin.
         p1 = FuzzySet(function=InvSigmoid_MF(c=0.25, a=20), term="small")
         p2 = FuzzySet(function=Gaussian_MF(mu=0.5, sigma=0.1), term="medium")
         p3 = FuzzySet(function=Sigmoid_MF(c=0.75, a=20), term="large")
-        self.input_2 = LinguisticVariable([p1, p2, p3], concept="Distance from origin", universe_of_discourse=[0, 1])
+        self.input_2 = LinguisticVariable(
+            [p1, p2, p3],
+            concept="Distance from origin",
+            universe_of_discourse=[0, 1],
+        )
         self.fs.add_linguistic_variable("origin_dist", self.input_2)
 
         # Output variable bottleneck probability.
         p1 = FuzzySet(function=InvSigmoid_MF(c=0.2, a=20), term="small")
         p2 = FuzzySet(function=Gaussian_MF(mu=0.4, sigma=0.1), term="medium")
         p3 = FuzzySet(function=Sigmoid_MF(c=0.6, a=20), term="large")
-        self.output_1 = LinguisticVariable([p1, p2, p3], concept="Bottleneck probability", universe_of_discourse=[0, 1])
+        self.output_1 = LinguisticVariable(
+            [p1, p2, p3],
+            concept="Bottleneck probability",
+            universe_of_discourse=[0, 1],
+        )
         self.fs.add_linguistic_variable("bot_prob", self.output_1)
 
         # Linguistic variables for output.
@@ -63,15 +75,17 @@ class FuzzyBott(object):
 
         # Set of rules.
         rules = []
-        rule_set = ['IF (diag_dist IS small) AND (origin_dist IS small) THEN (bot_prob IS large)',
-                    'IF (diag_dist IS small) AND (origin_dist IS medium) THEN (bot_prob IS medium)',
-                    'IF (diag_dist IS small) AND (origin_dist IS large) THEN (bot_prob IS small)',
-                    'IF (diag_dist IS medium) AND (origin_dist IS small) THEN (bot_prob IS medium)',
-                    'IF (diag_dist IS medium) AND (origin_dist IS medium) THEN (bot_prob IS medium)',
-                    'IF (diag_dist IS medium) AND (origin_dist IS large) THEN (bot_prob IS small)',
-                    'IF (diag_dist IS large) AND (origin_dist IS small) THEN (bot_prob IS large)',
-                    'IF (diag_dist IS large) AND (origin_dist IS medium) THEN (bot_prob IS medium)',
-                    'IF (diag_dist IS large) AND (origin_dist IS large) THEN (bot_prob IS large)']
+        rule_set = [
+            "IF (diag_dist IS small) AND (origin_dist IS small) THEN (bot_prob IS large)",
+            "IF (diag_dist IS small) AND (origin_dist IS medium) THEN (bot_prob IS medium)",
+            "IF (diag_dist IS small) AND (origin_dist IS large) THEN (bot_prob IS small)",
+            "IF (diag_dist IS medium) AND (origin_dist IS small) THEN (bot_prob IS medium)",
+            "IF (diag_dist IS medium) AND (origin_dist IS medium) THEN (bot_prob IS medium)",
+            "IF (diag_dist IS medium) AND (origin_dist IS large) THEN (bot_prob IS small)",
+            "IF (diag_dist IS large) AND (origin_dist IS small) THEN (bot_prob IS large)",
+            "IF (diag_dist IS large) AND (origin_dist IS medium) THEN (bot_prob IS medium)",
+            "IF (diag_dist IS large) AND (origin_dist IS large) THEN (bot_prob IS large)",
+        ]
         for rule in rule_set:
             rules.append(rule)
         self.fs.add_rules(rules)
@@ -99,7 +113,10 @@ class FuzzyBott(object):
         """
         self.fs.set_variable("diag_dist", diag_dist)
         self.fs.set_variable("origin_dist", origin_dist)
-        return round(self.fs.Sugeno_inference(["bot_prob"])["bot_prob"], 4)
+        return round(
+            self.fs.Sugeno_inference(["bot_prob"], verbose=False)["bot_prob"],
+            4,
+        )
 
 
 class STMops(object):
@@ -114,6 +131,7 @@ class STMops(object):
     - make_transitions - Creates transitions from traffic data necessary to compute STMs
     - compute_stm - Computes the STM
     """
+
     @staticmethod
     def get_mass_center(m):
         """Computes the center of mas of the STM
@@ -234,11 +252,19 @@ class STMops(object):
                 to_id = road_id_list[i + 1]
 
                 # Get origin (from_data) and destination (to_data) speeds
-                from_data = np.array(list(filter(lambda x: x[1] == from_id, veh_data)))
-                to_data = np.array(list(filter(lambda x: x[1] == to_id, veh_data)))
+                from_data = np.array(
+                    list(filter(lambda x: x[1] == from_id, veh_data))
+                )
+                to_data = np.array(
+                    list(filter(lambda x: x[1] == to_id, veh_data))
+                )
 
-                from_speed = STMops.get_harmonic_speed(from_data[:, 0].astype('float'))
-                to_speed = STMops.get_harmonic_speed(to_data[:, 0].astype('float'))
+                from_speed = STMops.get_harmonic_speed(
+                    from_data[:, 0].astype("float")
+                )
+                to_speed = STMops.get_harmonic_speed(
+                    to_data[:, 0].astype("float")
+                )
 
                 # Name of the transition OriginIDtoDestinationID
                 trans_id = "{0}to{1}".format(from_id, to_id)
@@ -273,10 +299,12 @@ class STMops(object):
                     continue
                 ###############################################
 
-                c_route_speed_index = int(rtm(origin_speeds[i]) / resolution - 1)
+                c_route_speed_index = int(
+                    rtm(origin_speeds[i]) / resolution - 1
+                )
                 n_route_speed_index = int(rtm(dest_speeds[i]) / resolution - 1)
 
                 t_matrix[c_route_speed_index, n_route_speed_index] += 1
-            return t_matrix.astype('int')
+            return t_matrix.astype("int")
         else:
-            return t_matrix.astype('int')
+            return t_matrix.astype("int")
