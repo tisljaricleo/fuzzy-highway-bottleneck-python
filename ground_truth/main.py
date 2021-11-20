@@ -5,10 +5,7 @@ import numpy as np
 import seaborn as sns
 from scipy.signal import savgol_filter
 import os
-import time
-import concurrent.futures
-
-# start = time.perf_counter()
+from misc import config
 
 interval_counter = 1
 
@@ -113,14 +110,14 @@ def get_bottleneck_status(path, interval_counter=interval_counter):
     bottleneck_status = []  # 0 or 1
 
     for i in range(0, len(smoothed_dens)):
-        if smoothed_dens[i] >= critical_density:
+        if smoothed_dens[i] >= config.CRITICAL_DENSITY:
             critical_d_ids_y.append(smoothed_dens[i])
             critical_d_ids_x.append(i + 1)
             binary_c_dens.append(1)
         else:
             binary_c_dens.append(0)
 
-        if smoothed_speed[i] <= critical_speed:
+        if smoothed_speed[i] <= config.CRITICAL_SPEED:
             critical_s_ids_y.append(smoothed_speed[i])
             critical_s_ids_x.append(i + 1)
             binary_c_speed.append(1)
@@ -128,8 +125,8 @@ def get_bottleneck_status(path, interval_counter=interval_counter):
             binary_c_speed.append(0)
 
         if (
-            smoothed_dens[i] >= critical_density
-            and smoothed_speed[i] <= critical_speed
+            smoothed_dens[i] >= config.CRITICAL_DENSITY
+            and smoothed_speed[i] <= config.CRITICAL_SPEED
         ):
             bottleneck_segments.append(i + 1)
             bottleneck_status.append(1)
@@ -184,38 +181,18 @@ def get_bottleneck_status(path, interval_counter=interval_counter):
     }
 
 
-# def get_total_bottleneck_status():
-#     # TODO: Exe time for computations 0.18s. Exe time for generator to list conversion 8s!!!!!
-#     with concurrent.futures.ThreadPoolExecutor() as executor:
-#         results = executor.map(get_bottleneck_status, data_paths)
-#         total_bottleneck_status = [result for result in results]
-
-#     return total_bottleneck_status
-
-#     # end = time.perf_counter()
-#     # print(f'Ended in {round(end-start, 2)} seconds!')
-
-#     # ax = plt.axes()
-#     # sns.heatmap(total_bottleneck_status, ax=ax)
-#     # ax.set_title('Ground truth bottleneck estimations')
-#     # ax.set_xlabel("Freeway segment")
-#     # ax.set_ylabel("Time (min)")
-#     # plt.show()
-
-
 sns.set_theme()
 
-critical_density = (
-    26  # Density value above this are considered as congestion [veh/km/lane].
-)
-critical_speed = (
-    65  # Speed values below this are considered as congestion [km/h].
-)
-n_segments = 160  # Number of freeway segments.
-segment_ids = range(1, 161, 1)
-segment_length = 50  # Freeway segment length [m].
+# # Density value above this are considered as congestion [veh/km/lane].
+# # Speed values below this are considered as congestion [km/h].
+# critical_density = 26
+# critical_speed = 65
+# n_segments = 160  # Number of freeway segments.
+# segment_ids = range(1, 161, 1)
+# segment_length = 50  # Freeway segment length [m].
 
 data_dir = "/home/leo/PycharmProjects/highwayBottleneck/data/"
+
 data_paths = []
 interval_counter = 1
 
