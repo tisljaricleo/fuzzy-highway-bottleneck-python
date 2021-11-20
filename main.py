@@ -18,6 +18,8 @@ __docformat__ = cfg.DOCFORMAT
 
 from misc.misc import open_pickle, plot_heatmap
 from FuzzySTM import FuzzyBott, STMops
+import ground_truth
+
 from itertools import islice
 import numpy as np
 import os
@@ -141,6 +143,9 @@ def main():
         matrix_bprob_proposed.append(bot_prob_edges)
 
     print()
+
+    # TODO: Pass the matrix_bprob_proposed to plot_eval_data() and plot it.
+    # ground_truth.plot_eval_data()
 
 
 if __name__ == "__main__":
