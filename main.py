@@ -92,7 +92,11 @@ def change_length(traff_data, length: int):
 
 def main():
 
-    data_dir = "/home/leo/PycharmProjects/highwayBottleneck/data/"
+    # data_dir = "/home/leo/PycharmProjects/highwayBottleneck/data/"
+    # data_dir = r"D:\___github\fuzzy-highway-bottleneck-python\data\ground_truth_data"
+
+    data_dir = r"D:\___github\fuzzy-highway-bottleneck-python\data\ground_truth_data\only_vehs"
+
     data_paths = []
     matrix_bprob_proposed = []
 
@@ -145,7 +149,7 @@ def main():
     print()
 
     # TODO: Pass the matrix_bprob_proposed to plot_eval_data() and plot it.
-    # ground_truth.plot_eval_data()
+    # ground_truth.plot_eval_data(data_dir)
 
 
 if __name__ == "__main__":

@@ -148,7 +148,7 @@ def get_bottleneck_status(path, interval_counter=interval_counter):
     }
 
 
-def plot_eval_data():
+def plot_eval_data(data_dir):
     """Generates five evaluation matrices.
     Matrices:
     1) matrix_s_exact: Time x Segments (Exact speed values)
@@ -158,7 +158,7 @@ def plot_eval_data():
     5) matrix_pbrob_eval: Time x Segments (0/1 evaluated bott. detection)
     """
 
-    data_dir = "/home/leo/PycharmProjects/highwayBottleneck/data/"
+    # data_dir = "/home/leo/PycharmProjects/highwayBottleneck/data/"
 
     data_paths = []
     interval_counter = 1
