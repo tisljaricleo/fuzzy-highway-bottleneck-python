@@ -20,6 +20,7 @@ from misc import config
 from misc.misc import rtm
 from math import sqrt
 import numpy as np
+from collections import OrderedDict
 
 
 class FuzzyBott(object):
@@ -248,15 +249,22 @@ class STMops(object):
                     road_id_list.append(v[1])
 
             for i in range(0, len(road_id_list) - 1):
+
                 from_id = road_id_list[i]
                 to_id = road_id_list[i + 1]
 
+                # Difference between ids must be 50 (m).
+                # If difference is 100, data is missing.
+                if from_id != "E0":
+                    if (int(to_id) - int(from_id)) >= 100:
+                        continue
+
                 # Get origin (from_data) and destination (to_data) speeds
                 from_data = np.array(
-                    list(filter(lambda x: x[1] == from_id, veh_data))
+                    list(filter(lambda x: x[1] == str(from_id), veh_data))
                 )
                 to_data = np.array(
-                    list(filter(lambda x: x[1] == to_id, veh_data))
+                    list(filter(lambda x: x[1] == str(to_id), veh_data))
                 )
 
                 from_speed = STMops.get_harmonic_speed(
@@ -266,14 +274,22 @@ class STMops(object):
                     to_data[:, 0].astype("float")
                 )
 
+                if from_id == "E0":
+                    from_id = 0
+                    to_id = int(to_id)
+                else:
+                    from_id = int(from_id)
+                    to_id = int(to_id)
+
                 # Name of the transition OriginIDtoDestinationID
-                trans_id = "{0}to{1}".format(from_id, to_id)
+                trans_id = (from_id, to_id)
 
                 if trans_id not in transitions.keys():
                     transitions[trans_id] = []
 
                 transitions[trans_id].append([from_speed, to_speed])
-        return transitions
+
+        return OrderedDict(sorted(transitions.items()))
 
     @staticmethod
     def compute_stm(origin_speeds, dest_speeds):

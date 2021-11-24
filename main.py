@@ -95,7 +95,7 @@ def main():
     # data_dir = "/home/leo/PycharmProjects/highwayBottleneck/data/"
     # data_dir = r"D:\___github\fuzzy-highway-bottleneck-python\data\ground_truth_data"
 
-    data_dir = r"D:\___github\fuzzy-highway-bottleneck-python\data\ground_truth_data\only_vehs"
+    data_dir = r"D:\___github\fuzzy-highway-bottleneck-python\data\ground_truth_data"
 
     data_paths = []
     matrix_bprob_proposed = []
@@ -123,7 +123,7 @@ def main():
         fuzzy = FuzzyBott()
 
         # Plot input and output variables from FIS
-        fuzzy.plot_vars()
+        # fuzzy.plot_vars()
 
         bot_prob_edges = []
 
@@ -146,10 +146,13 @@ def main():
 
         matrix_bprob_proposed.append(bot_prob_edges)
 
-    print()
+        print(f"Interval: {interval_counter}")
+        interval_counter += 1
+
+    # print()
 
     # TODO: Pass the matrix_bprob_proposed to plot_eval_data() and plot it.
-    # ground_truth.plot_eval_data(data_dir)
+    ground_truth.plot_eval_data(data_dir, matrix_bprob_proposed)
 
 
 if __name__ == "__main__":

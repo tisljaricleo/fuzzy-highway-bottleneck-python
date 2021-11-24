@@ -148,7 +148,7 @@ def get_bottleneck_status(path, interval_counter=interval_counter):
     }
 
 
-def plot_eval_data(data_dir):
+def plot_eval_data(data_dir, matrix_bprob_proposed):
     """Generates five evaluation matrices.
     Matrices:
     1) matrix_s_exact: Time x Segments (Exact speed values)
@@ -214,9 +214,9 @@ def plot_eval_data(data_dir):
     ax[2, 0].set_ylabel("Time (min)")
 
     # TODO: Add plot for proposed method matrix
-    # sns.heatmap(matrix_pbrob_proposed, ax=ax[2, 1])
-    # ax[2, 1].set_title("Proposed bottleneck estimations (0/1)")
-    # ax[2, 1].set_xlabel("Freeway segment")
-    # ax[2, 1].set_ylabel("Time (min)")
+    sns.heatmap(matrix_bprob_proposed, ax=ax[2, 1])
+    ax[2, 1].set_title("Proposed bottleneck estimations (0/1)")
+    ax[2, 1].set_xlabel("Freeway segment")
+    ax[2, 1].set_ylabel("Time (min)")
 
     plt.show()
