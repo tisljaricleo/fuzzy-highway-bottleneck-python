@@ -61,7 +61,8 @@ class FuzzyBott(object):
         # Output variable bottleneck probability.
         p1 = FuzzySet(function=InvSigmoid_MF(c=0.2, a=20), term="small")
         p2 = FuzzySet(function=Gaussian_MF(mu=0.4, sigma=0.1), term="medium")
-        p3 = FuzzySet(function=Sigmoid_MF(c=0.6, a=20), term="large")
+        # p3 = FuzzySet(function=Sigmoid_MF(c=0.6, a=20), term="large")
+        p3 = FuzzySet(function=Sigmoid_MF(c=0.55, a=20), term="large")
         self.output_1 = LinguisticVariable(
             [p1, p2, p3],
             concept="Bottleneck probability",

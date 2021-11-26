@@ -7,7 +7,7 @@ __status__ = cfg.STATUS
 __docformat__ = cfg.DOCFORMAT
 
 from misc import config
-from misc.misc import save_pickle_data, open_pickle
+from misc.misc import save_pickle_data, open_pickle, get_data_paths
 import pickle
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -77,14 +77,14 @@ def get_bottleneck_status(path, interval_counter=interval_counter):
     bottleneck_status = []  # 0 or 1
 
     for i in range(0, len(smoothed_dens)):
-        if smoothed_dens[i] >= config.CRITICAL_DENSITY:
+        if smoothed_dens[i] > config.CRITICAL_DENSITY:
             critical_d_ids_y.append(smoothed_dens[i])
             critical_d_ids_x.append(i + 1)
             binary_c_dens.append(1)
         else:
             binary_c_dens.append(0)
 
-        if smoothed_speed[i] <= config.CRITICAL_SPEED:
+        if smoothed_speed[i] < config.CRITICAL_SPEED:
             critical_s_ids_y.append(smoothed_speed[i])
             critical_s_ids_x.append(i + 1)
             binary_c_speed.append(1)
@@ -92,8 +92,8 @@ def get_bottleneck_status(path, interval_counter=interval_counter):
             binary_c_speed.append(0)
 
         if (
-            smoothed_dens[i] >= config.CRITICAL_DENSITY
-            and smoothed_speed[i] <= config.CRITICAL_SPEED
+            smoothed_dens[i] > config.CRITICAL_DENSITY
+            and smoothed_speed[i] < config.CRITICAL_SPEED
         ):
             bottleneck_segments.append(i + 1)
             bottleneck_status.append(1)
@@ -148,7 +148,7 @@ def get_bottleneck_status(path, interval_counter=interval_counter):
     }
 
 
-def plot_eval_data(data_dir, matrix_bprob_proposed):
+def plot_eval_data(data_dir, matrix_bprob_proposed, matrix_bprob_proposed_binary):
     """Generates five evaluation matrices.
     Matrices:
     1) matrix_s_exact: Time x Segments (Exact speed values)
@@ -160,16 +160,8 @@ def plot_eval_data(data_dir, matrix_bprob_proposed):
 
     # data_dir = "/home/leo/PycharmProjects/highwayBottleneck/data/"
 
-    data_paths = []
+    data_paths = get_data_paths(data_dir=data_dir, data_type="Link")
     interval_counter = 1
-
-    # Get all data containing values recorded by link (freeway segments).
-    for file in os.listdir(data_dir):
-        if file.endswith(".pkl") and "Link" in file:
-            data_paths.append(os.path.join(data_dir, file))
-
-    data_paths.sort()
-    data_paths.sort(key=lambda x: len(x))
 
     # Init evaluation matrices.
     matrix_s_exact = []
@@ -186,37 +178,58 @@ def plot_eval_data(data_dir, matrix_bprob_proposed):
         matrix_d_binary.append(bot_vars["binary_c_dens"])
         matrix_pbrob_eval.append(bot_vars["bottleneck_status"])
 
-    fig, ax = plt.subplots(3, 2)
+    fig, ax = plt.subplots(4, 2, figsize=(30, 20))
 
     sns.heatmap(matrix_s_binary, ax=ax[0, 0])
     ax[0, 0].set_title("Critical speed (0/1)")
     ax[0, 0].set_xlabel("Freeway segment")
     ax[0, 0].set_ylabel("Time (min)")
+    ax[0, 0].invert_yaxis()
 
     sns.heatmap(matrix_s_exact, ax=ax[0, 1])
     ax[0, 1].set_title("Exact speed (km/h)")
     ax[0, 1].set_xlabel("Freeway segment")
     ax[0, 1].set_ylabel("Time (min)")
+    ax[0, 1].invert_yaxis()
 
     sns.heatmap(matrix_d_binary, ax=ax[1, 0])
     ax[1, 0].set_title("Critical desnity (0/1)")
     ax[1, 0].set_xlabel("Freeway segment")
     ax[1, 0].set_ylabel("Time (min)")
+    ax[1, 0].invert_yaxis()
 
     sns.heatmap(matrix_d_exact, ax=ax[1, 1])
     ax[1, 1].set_title("Exact density (v/km/lane)")
     ax[1, 1].set_xlabel("Freeway segment")
     ax[1, 1].set_ylabel("Time (min)")
+    ax[1, 1].invert_yaxis()
 
     sns.heatmap(matrix_pbrob_eval, ax=ax[2, 0])
     ax[2, 0].set_title("Ground truth bottleneck estimations (0/1)")
     ax[2, 0].set_xlabel("Freeway segment")
     ax[2, 0].set_ylabel("Time (min)")
+    ax[2, 0].invert_yaxis()
 
-    # TODO: Add plot for proposed method matrix
     sns.heatmap(matrix_bprob_proposed, ax=ax[2, 1])
+    ax[2, 1].set_title("Proposed bottleneck estimations (%)")
+    ax[2, 1].set_xlabel("Freeway segment")
+    ax[2, 1].set_ylabel("Time (min)")
+    ax[2, 1].invert_yaxis()
+
+    sns.heatmap(matrix_bprob_proposed_binary, ax=ax[3, 0])
     ax[2, 1].set_title("Proposed bottleneck estimations (0/1)")
     ax[2, 1].set_xlabel("Freeway segment")
     ax[2, 1].set_ylabel("Time (min)")
+    ax[2, 1].invert_yaxis()
 
-    plt.show()
+    plt.savefig("results.png")
+    # plt.show()
+
+    unique0, counts0 = np.unique(matrix_bprob_proposed, return_counts=True)
+    print(f"Proposed_full: {dict(zip(unique0, counts0))}")
+
+    unique1, counts1 = np.unique(matrix_pbrob_eval, return_counts=True)
+    print(f"Evaluation: {dict(zip(unique1, counts1))}")
+
+    unique2, counts2 = np.unique(matrix_bprob_proposed_binary, return_counts=True)
+    print(f"Proposed: {dict(zip(unique2, counts2))}")

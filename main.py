@@ -16,7 +16,7 @@ __status__ = cfg.STATUS
 __docformat__ = cfg.DOCFORMAT
 
 
-from misc.misc import open_pickle, plot_heatmap
+from misc.misc import open_pickle, plot_heatmap, get_data_paths
 from FuzzySTM import FuzzyBott, STMops
 import ground_truth
 
@@ -91,21 +91,21 @@ def change_length(traff_data, length: int):
 
 
 def main():
-
     # data_dir = "/home/leo/PycharmProjects/highwayBottleneck/data/"
     # data_dir = r"D:\___github\fuzzy-highway-bottleneck-python\data\ground_truth_data"
 
     data_dir = r"D:\___github\fuzzy-highway-bottleneck-python\data\ground_truth_data"
 
-    data_paths = []
     matrix_bprob_proposed = []
-
     interval_counter = 1
 
-    # Get all data from 24 time intervals.
-    for file in os.listdir(data_dir):
-        if file.endswith(".pkl") and "Veh" in file:
-            data_paths.append(os.path.join(data_dir, file))
+    data_paths = get_data_paths(data_dir=data_dir, data_type="Veh")
+
+    # Initializes the FIS.
+    fuzzy = FuzzyBott()
+
+    # Plot input and output variables from FIS
+    fuzzy.plot_vars()
 
     for dp in data_paths:
 
@@ -118,12 +118,6 @@ def main():
 
         # Generates transitions from routes data.
         transitions = STMops.make_transitions(routes_data)
-
-        # Initializes the FIS.
-        fuzzy = FuzzyBott()
-
-        # Plot input and output variables from FIS
-        # fuzzy.plot_vars()
 
         bot_prob_edges = []
 
@@ -151,8 +145,19 @@ def main():
 
     # print()
 
+    prob_los_f = 0.51
+    # najbolje za sad 0.52
+    #Evaluation: {0: 2580, 1: 1260}
+    #Proposed: {0.0: 2843, 1.0: 997}
+
+
+
+    np_matrix = np.array(matrix_bprob_proposed)
+    matrix_bprob_proposed_binary = np.where(np_matrix >= prob_los_f, 1, np_matrix)
+    matrix_bprob_proposed_binary = np.where(matrix_bprob_proposed_binary < prob_los_f, 0, matrix_bprob_proposed_binary)
+
     # TODO: Pass the matrix_bprob_proposed to plot_eval_data() and plot it.
-    ground_truth.plot_eval_data(data_dir, matrix_bprob_proposed)
+    ground_truth.plot_eval_data(data_dir, matrix_bprob_proposed, matrix_bprob_proposed_binary)
 
 
 if __name__ == "__main__":

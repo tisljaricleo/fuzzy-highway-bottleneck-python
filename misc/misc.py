@@ -20,6 +20,29 @@ import pickle
 from misc import config
 import numpy as np
 import matplotlib.pyplot as plt
+import os
+
+
+def get_data_paths(data_dir: str, data_type: str):
+    """
+    Get all data from 24 time intervals.
+    Data is saved into pickles, one pickle for 5 min intervals.
+    :param data_dir: Path to directory with data.
+    :param data_type: Type of data -> Veh or Link.
+    :type data_dir: str
+    :type data_type: str
+    :return:
+    """
+    data_paths = []
+
+    for file in os.listdir(data_dir):
+        if file.endswith(".pkl") and data_type in file:
+            data_paths.append(os.path.join(data_dir, file))
+
+    data_paths.sort()
+    data_paths.sort(key=lambda x: len(x))
+
+    return data_paths
 
 
 def save_pickle_data(path, data):

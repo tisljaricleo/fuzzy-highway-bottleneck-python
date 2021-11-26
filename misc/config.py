@@ -51,10 +51,10 @@ global SEGMENT_IDS
 global SEGMENT_LENGTH
 
 CRITICAL_DENSITY = (
-    26  # Density value above this are considered as congestion [veh/km/lane].
+    28  # Density value above this are considered as congestion [veh/km/lane].
 )
 CRITICAL_SPEED = (
-    65  # Speed values below this are considered as congestion [km/h].
+    80  # Speed values below this are considered as congestion [km/h].
 )
 
 N_SEGMENTS = 160  # Number of freeway segments.
