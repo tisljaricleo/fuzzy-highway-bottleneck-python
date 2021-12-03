@@ -14,8 +14,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 from scipy.signal import savgol_filter
+from sklearn.metrics import confusion_matrix, classification_report
 import os
 
+# plt.rcParams["axes.grid"] = True
+# plt.rcParams.update({'font.size': 30})
 
 interval_counter = 1
 sns.set_theme()
@@ -178,6 +181,16 @@ def plot_eval_data(data_dir, matrix_bprob_proposed, matrix_bprob_proposed_binary
         matrix_d_binary.append(bot_vars["binary_c_dens"])
         matrix_pbrob_eval.append(bot_vars["bottleneck_status"])
 
+
+    save_pickle_data("temp/matrix_s_exact.pkl", matrix_s_exact)
+    save_pickle_data("temp/matrix_s_binary.pkl", matrix_s_binary)
+    save_pickle_data("temp/matrix_d_exact.pkl", matrix_d_exact)
+    save_pickle_data("temp/matrix_d_binary.pkl", matrix_d_binary)
+    save_pickle_data("temp/matrix_pbrob_eval.pkl", matrix_pbrob_eval)
+    save_pickle_data("temp/matrix_bprob_proposed.pkl", matrix_bprob_proposed)
+    save_pickle_data("temp/matrix_bprob_proposed_binary.pkl", matrix_bprob_proposed_binary)
+
+
     fig, ax = plt.subplots(4, 2, figsize=(30, 20))
 
     sns.heatmap(matrix_s_binary, ax=ax[0, 0])
@@ -217,10 +230,11 @@ def plot_eval_data(data_dir, matrix_bprob_proposed, matrix_bprob_proposed_binary
     ax[2, 1].invert_yaxis()
 
     sns.heatmap(matrix_bprob_proposed_binary, ax=ax[3, 0])
-    ax[2, 1].set_title("Proposed bottleneck estimations (0/1)")
-    ax[2, 1].set_xlabel("Freeway segment")
-    ax[2, 1].set_ylabel("Time (min)")
-    ax[2, 1].invert_yaxis()
+    ax[3, 0].set_title("Proposed bottleneck estimations (0/1)")
+    ax[3, 0].set_xlabel("Freeway segment")
+    ax[3, 0].set_ylabel("Time (min)")
+    ax[3, 0].invert_yaxis()
+
 
     plt.savefig("results.png")
     # plt.show()
@@ -233,3 +247,25 @@ def plot_eval_data(data_dir, matrix_bprob_proposed, matrix_bprob_proposed_binary
 
     unique2, counts2 = np.unique(matrix_bprob_proposed_binary, return_counts=True)
     print(f"Proposed: {dict(zip(unique2, counts2))}")
+
+    y_true = np.array(matrix_pbrob_eval)
+    y_pred = np.array(matrix_bprob_proposed_binary)
+
+    print(confusion_matrix(y_true=y_true.astype("int").flatten(),
+                           y_pred=y_pred.astype("int").flatten()))
+    print(classification_report(y_true=y_true.astype("int").flatten(),
+                                y_pred=y_pred.astype("int").flatten()))
+
+    #
+    # fig, ax = plt.subplots(figsize=(20, 10), dpi=300)
+    # sns.heatmap(matrix_s_binary, ax=ax, cmap="inferno_r", cbar_kws={'label': 'Critical speed (0/1)'})
+    # ax.set_xticks(range(0, 161, 5))
+    # ax.set_xticklabels(range(0, 161, 5))
+    # ax.set_xlabel("Freeway segment")
+    # ax.set_yticks(range(0, 25, 5))
+    # ax.set_yticklabels(range(0, 25, 5))
+    # ax.set_ylabel("Time (min)")
+    # ax.invert_yaxis()
+    # plt.savefig("results1.png")
+    #
+    #

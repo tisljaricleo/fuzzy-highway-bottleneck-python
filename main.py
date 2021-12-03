@@ -146,9 +146,7 @@ def main():
     # print()
 
     prob_los_f = 0.51
-    # najbolje za sad 0.52
-    #Evaluation: {0: 2580, 1: 1260}
-    #Proposed: {0.0: 2843, 1.0: 997}
+
 
 
 

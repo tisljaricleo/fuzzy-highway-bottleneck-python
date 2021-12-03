@@ -54,7 +54,7 @@ CRITICAL_DENSITY = (
     28  # Density value above this are considered as congestion [veh/km/lane].
 )
 CRITICAL_SPEED = (
-    80  # Speed values below this are considered as congestion [km/h].
+    70  # Speed values below this are considered as congestion [km/h].
 )
 
 N_SEGMENTS = 160  # Number of freeway segments.

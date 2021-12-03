@@ -61,8 +61,16 @@ class FuzzyBott(object):
         # Output variable bottleneck probability.
         p1 = FuzzySet(function=InvSigmoid_MF(c=0.2, a=20), term="small")
         p2 = FuzzySet(function=Gaussian_MF(mu=0.4, sigma=0.1), term="medium")
-        # p3 = FuzzySet(function=Sigmoid_MF(c=0.6, a=20), term="large")
-        p3 = FuzzySet(function=Sigmoid_MF(c=0.55, a=20), term="large")
+        p3 = FuzzySet(function=Sigmoid_MF(c=0.6, a=20), term="large")
+
+        """
+        # Initial setup
+        p1 = FuzzySet(function=InvSigmoid_MF(c=0.2, a=20), term="small")
+        p2 = FuzzySet(function=Gaussian_MF(mu=0.4, sigma=0.1), term="medium")
+        p3 = FuzzySet(function=Sigmoid_MF(c=0.6, a=20), term="large")
+        """
+
+
         self.output_1 = LinguisticVariable(
             [p1, p2, p3],
             concept="Bottleneck probability",
@@ -88,6 +96,17 @@ class FuzzyBott(object):
             "IF (diag_dist IS large) AND (origin_dist IS medium) THEN (bot_prob IS medium)",
             "IF (diag_dist IS large) AND (origin_dist IS large) THEN (bot_prob IS large)",
         ]
+        # rule_set = [
+        #     "IF (diag_dist IS small) AND (origin_dist IS small) THEN (bot_prob IS large)",
+        #     "IF (diag_dist IS small) AND (origin_dist IS medium) THEN (bot_prob IS large)",
+        #     "IF (diag_dist IS small) AND (origin_dist IS large) THEN (bot_prob IS small)",
+        #     "IF (diag_dist IS medium) AND (origin_dist IS small) THEN (bot_prob IS large)",
+        #     "IF (diag_dist IS medium) AND (origin_dist IS medium) THEN (bot_prob IS large)",
+        #     "IF (diag_dist IS medium) AND (origin_dist IS large) THEN (bot_prob IS medium)",
+        #     "IF (diag_dist IS large) AND (origin_dist IS small) THEN (bot_prob IS large)",
+        #     "IF (diag_dist IS large) AND (origin_dist IS medium) THEN (bot_prob IS large)",
+        #     "IF (diag_dist IS large) AND (origin_dist IS large) THEN (bot_prob IS large)",
+        # ]
         for rule in rule_set:
             rules.append(rule)
         self.fs.add_rules(rules)
