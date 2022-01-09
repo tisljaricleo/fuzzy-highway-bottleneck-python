@@ -12,7 +12,7 @@ The data is proveded in the file `TrafData.pkl`. It contains the routes of the v
 2. Install required packages from `requirenments.txt` using [virtual environment](https://docs.python.org/3/tutorial/venv.html).
 
 ## More info
-You can expect more info and the scientific paper and Medium article by September 2021.
+Medium article [https://towardsdatascience.com/using-fuzzy-logic-for-road-traffic-congestion-index-estimation-b649f8ddede1](https://towardsdatascience.com/using-fuzzy-logic-for-road-traffic-congestion-index-estimation-b649f8ddede1).
 
 ## Contact and connect
 [Leo Tisljaric](https://www.linkedin.com/in/leo-ti%C5%A1ljari%C4%87-28a56b123/)
