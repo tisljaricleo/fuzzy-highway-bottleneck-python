@@ -15,5 +15,5 @@ The data is proveded in the file `TrafData.pkl`. It contains the routes of the v
 Medium article [https://towardsdatascience.com/using-fuzzy-logic-for-road-traffic-congestion-index-estimation-b649f8ddede1](https://towardsdatascience.com/using-fuzzy-logic-for-road-traffic-congestion-index-estimation-b649f8ddede1).
 
 ## Contact and connect
-[Leo Tisljaric](https://www.linkedin.com/in/leo-ti%C5%A1ljari%C4%87-28a56b123/)
+[Leo Tisljaric](https://www.linkedin.com/in/leo-tisljaric-28a56b123/)
 
