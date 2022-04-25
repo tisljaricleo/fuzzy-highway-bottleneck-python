@@ -14,6 +14,25 @@ The data is proveded in the file `TrafData.pkl`. It contains the routes of the v
 ## More info
 Medium article [https://towardsdatascience.com/using-fuzzy-logic-for-road-traffic-congestion-index-estimation-b649f8ddede1](https://towardsdatascience.com/using-fuzzy-logic-for-road-traffic-congestion-index-estimation-b649f8ddede1).
 
+## Cite as
+Text:  
+Tišljarić, Leo, Filip Vrbanić, Edouard Ivanjko, and Tonči Carić. 2022. "Motorway Bottleneck Probability Estimation in Connected Vehicles Environment Using Speed Transition Matrices" Sensors 22, no. 7: 2807. https://doi.org/10.3390/s22072807
+
+.bib:  
+@Article{s22072807,
+AUTHOR = {Tišljarić, Leo and Vrbanić, Filip and Ivanjko, Edouard and Carić, Tonči},
+TITLE = {Motorway Bottleneck Probability Estimation in Connected Vehicles Environment Using Speed Transition Matrices},
+JOURNAL = {Sensors},
+VOLUME = {22},
+YEAR = {2022},
+NUMBER = {7},
+ARTICLE-NUMBER = {2807},
+URL = {https://www.mdpi.com/1424-8220/22/7/2807},
+PubMedID = {35408421},
+ISSN = {1424-8220},
+DOI = {10.3390/s22072807}
+}
+
 ## Contact and connect
 [Leo Tisljaric](https://www.linkedin.com/in/leo-tisljaric-28a56b123/)
 
